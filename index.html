@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch-Decode-Execute</title>
+    <style>
+        table, td {
+          border: 1px solid black;
+        }
+        </style>
+    <script>
+        var clock = 0;
+        var addrs = 1;
+
+        const updateClock = () => {
+            clock++;
+            document.getElementById("registers").rows[4].cells[1].innerHTML = clock;   
+        }
+
+        const fetchI = () => {
+            const tableI = document.getElementById("instruction").rows[addrs].cells;
+            const tableR = document.getElementById("registers");
+            
+            // update program counter
+            tableR.rows[1].cells[1].innerHTML = tableI[0].innerHTML;
+
+            // update instruction register
+            tableR.rows[2].cells[1].innerHTML = tableI[1].innerHTML;
+
+            addrs++;
+            updateClock();
+        }
+
+        const executeI = () => {
+            const tableR = document.getElementById("registers");
+    
+            // get instruction register
+            const i = tableR.rows[2].cells[1].innerHTML.split(" ");
+
+            // get insturction set
+            const val = document.getElementById("instruction").rows[parseInt(i[1]) + 1].cells[1];
+            const opcode = i[0];    
+
+            switch(opcode) {
+                case "LOAD":
+                    tableR.rows[3].cells[1].innerHTML = val.innerHTML;
+                    break;
+                case "ADD":
+                    const num1 = parseInt(tableR.rows[3].cells[1].innerHTML);
+                    const num2 = parseInt(val.innerHTML);
+                    tableR.rows[3].cells[1].innerHTML = num1 + num2;
+                    break;
+                case "JUMP":
+                    addrs = parseInt(i[1]) + 1;
+                    break;
+                case "STORE":
+                    val.innerHTML = tableR.rows[3].cells[1].innerHTML;
+                    break;
+            }
+            updateClock();
+        }
+    </script>
+</head>
+<body>
+    <input type="button" name="fetch" value="Fetch" id="fetch" onclick="fetchI()"> <br>
+    <input type="button" name="execute" value="Execute" id="execute" onclick="executeI()"> <br>
+
+    <table id="registers">
+        <th>Registers</th>
+        <tr>
+            <td>Program Counter</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Instruction Register</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Accumulator</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Clock</td>
+            <td>0</td>
+        </tr>
+    </table>
+
+    <table id="instruction">
+        <th>Instruction Set</th>
+        <tr>
+            <td>0</td>
+            <td>LOAD 6</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>ADD 7</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>STORE 6</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>JUMP 1</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>-1</td>
+        </tr>
+    </table>
+</body>
+</html>
